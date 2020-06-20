@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        ">
+
+	<!-- Cách đơn giản nhất là tạo bằng default constructor -->
+	<bean id="duke" class="beansdemo.Juggler"> </bean>
+	
+	<!-- Nếu muốn dùng constructor với đối số cụ thể thì cũng ok -->
+	<bean id="duke2" class="beansdemo.Juggler">
+		<constructor-arg value="15" />
+	</bean>
+
+	<bean id="sonnet29" class="beansdemo.Sonnet" />
+
+	<!-- Mình cũng có thể sử dụng thuộc tính là 1 bean khác -->
+	<bean id="poeticDuke"
+		class="beansdemo.PoeticJuggler">
+		<constructor-arg value="15" />
+		<constructor-arg ref="sonnet29" />
+	</bean>
+	
+	
+	<!-- Khi mà ta khởi tạo 1 bean hay khi hủy nó đôi khi ta muốn setup vài thứ trước khi nó ở trạng thái -->
+	<!-- usable và clear up . Ta có thể dựa vào spring life cycle -->
+	<!-- bằng 2 method init và destroy -->
+	
+	<!-- Có 1 cách khác là ta implements InitializingBean  and  DisposableBean  interfaces -->
+	
+	<!-- Nếu tất cả bean đều có defaul init, destroy thì khai báo trên beans luôn cũng dc -->
+	<!-- Mọi người có thể thấy là object đã được khởi tạo nghi deploy, k cần gọi bên kia mới tạo nhé -->
+	
+	<bean id="auditorium" class="beansdemo.Auditorium"
+	init-method="turnOnLights" destroy-method="turnOffLights" />
+
+	<!-- Đôi khi mình k muốn cho phép người khác được khởi tạo object từ class 
+		này thì -->
+	<!-- Mình có thể để constructor là private và gọi 1 phương thức static để 
+		khởi tạo bằng factory -->
+	<bean id="theStage" class="beansdemo.Stage"
+	factory-method="getInstance" />
+
+	<!-- Mặc định thì khi mà ta gọi ra nó là singletone -->
+	<!-- Nếu muốn mỗi lần gọi ra 1 object khác thì mình khai báo scope cho nó -->
+	<!-- thu 2 bean de xem su khac biet -->
+	
+	<bean id="protype"
+		class="beansdemo.PoeticJuggler" scope="prototype">
+		<constructor-arg value="15" />
+		<constructor-arg ref="sonnet29" />
+	</bean>
+	
+
+	<!-- Su dung 1 so cach khac de inject vd property va nest bean -->
+	<bean id="kenny"
+		class="beansdemo.Instrumentalist">
+		<property name="song" value="Jingle Bells" />
+	</bean>	
+	
+	<bean id = "saxophone" class = "beansdemo.Saxophone"> </bean>
+	
+	<bean id="kenny2" class = "beansdemo.Instrumentalist">
+		<property name="song" value="Jingle Bells" />
+		<property name="instrument" ref="saxophone" />
+	</bean>
+
+	<bean id="piano" class="beansdemo.Piano" />
+	<bean id="kenny3"
+		class="beansdemo.Instrumentalist">
+		<property name="song" value="Jingle Bells" />
+		<property name="instrument" ref="piano" />
+	</bean>
+
+
+	<bean id="kenny4"
+		class="beansdemo.Instrumentalist">
+		<property name="song" value="Jingle Bells" />
+		<property name="instrument">
+			<bean class="beansdemo.Saxophone" />
+		</property>
+	</bean>
+	
+	<bean id="duke6"
+		class="beansdemo.PoeticJuggler">
+		<constructor-arg value="15" />
+		<constructor-arg>
+			<bean class="beansdemo.Sonnet" />
+		</constructor-arg>
+	</bean>
+
+	<!--    sử dụng spring p namespace -->
+	<!--    thực ra xài cái nào tùy vào bạn, nó work đều ok như nhau -->
+	<!-- them thang nay vao truoc cho beans de khai bao :V -->
+	<!-- xmlns:p="http://www.springframework.org/schema/p" -->
+
+	<!-- 	<bean id="kenny5" -->
+	<!-- 		class="beansdemo.Instrumentalist" -->
+	<!-- 		p:song="Jingle Bells" p:instrument-ref="piano" /> -->
+
+
+	<bean id="hank" class="beansdemo.OneManBand">
+		<property name="instruments">
+			<list>
+				<ref bean="piano" />
+				<ref bean="saxophone" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="spel" class="beansdemo.PoeticJuggler">
+		<property name="beanBags" value="#{10}" />
+		<property name="poem" value="#{sonnet29}" />
+	
+	</bean>
+	
+</beans>
